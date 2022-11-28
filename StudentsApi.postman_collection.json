@@ -1,0 +1,287 @@
+{
+	"info": {
+		"_postman_id": "bb252e05-8aa1-49de-88be-5bc09e371670",
+		"name": "StudentsApi",
+		"description": "This collection contains all the blackbox tests for the [CrudApi](https://github.com/ssadrian/CrudApi).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Students",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"John\",\r\n    \"apellidos\": \"Smith\",\r\n    \"dni\": \"A12345678A\",\r\n    \"curso\": \"CompSci\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/student",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"student"
+							]
+						},
+						"description": "Create a student in the DB."
+					},
+					"response": []
+				},
+				{
+					"name": "All",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/students",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"students"
+							]
+						},
+						"description": "Get all students from the DB."
+					},
+					"response": []
+				},
+				{
+					"name": "Filtered",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/student",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"student"
+							]
+						},
+						"description": "Get all students, filtered by these fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"nombre\": \"Smith\",\r\n    \"apellidos\": \"John\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/student",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"student"
+							]
+						},
+						"description": "Update a student that matches *id* with the specified fields.\n\n**The id of the student cannot be changed.**"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/student",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"student"
+							]
+						},
+						"description": "Delete a student by it's *id*.\nIf no student was found then nothing will be destroyed."
+					},
+					"response": []
+				}
+			],
+			"description": "All endpoints within this folder require a registration token attainable by registering with the api.",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{Api Token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"TestUser\",\r\n    \"password\": \"p@ssw0rd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_URL}}/login",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"login"
+					]
+				},
+				"description": "A user an login only with their name and password."
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"TestUser\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"p@ssw0rd\",\r\n    \"password_confirmation\": \"p@ssw0rd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_URL}}/register",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"register"
+					]
+				},
+				"description": "All the fields from body are required.\nThe user/name and email must be unique and the password must be confirmed."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "API_URL",
+			"value": "http://localhost:8000/api",
+			"type": "default"
+		},
+		{
+			"key": "Api Token",
+			"value": "GDbf5mq8DMiSkoDQllVGzqVc4r5KXeqIcpjFMnti"
+		},
+		{
+			"value": "",
+			"type": "default"
+		}
+	]
+}
