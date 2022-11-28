@@ -10,13 +10,33 @@ use Illuminate\Console\Application;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * Controller in charge with the C.R.U.D. of Students
+ *
+ * @see Student
+ */
 class StudentsController extends Controller
 {
+    /**
+     * Get all Students from the DB
+     *
+     * @return Collection A collection of Student
+     * @see Student
+     */
     public function getAll(): Collection
     {
         return Student::all();
     }
 
+    /**
+     * Get a filtered student based on the body of the request
+     *
+     * @param Request $request The incoming request to the endpoint
+     * @return JsonResponse A JsonResponse with all the filtered students<p>
+     * If no filter was specified then returns all the students
+     *
+     * @see Student
+     */
     public function get(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -54,11 +74,20 @@ class StudentsController extends Controller
         );
     }
 
+    /**
+     * Create a new student
+     *
+     * @param Request $request The incoming request to the endpoint
+     * @return Application|ResponseFactory|Response Code 201 when a new student was created successfully<p>
+     * Otherwise, returns a BadRequest
+     *
+     * @see Student
+     */
     public function post(Request $request): Application|ResponseFactory|Response
     {
         $data = $request->validate([
             "nombre" => "required|string",
-            "apellidos" => "required|int",
+            "apellidos" => "required|string",
             "dni" => "required|string",
             "curso" => "required|string"
         ]);
@@ -73,14 +102,23 @@ class StudentsController extends Controller
         // Student exists -> was created
         if ($newStudent) {
             // Created
-            return response(status: 201);
+            return response(content: "", status: 201);
         }
 
         // Bad Request
-        return response(status: 400);
+        return response(content: "", status: 400);
     }
 
-    public function put(Request $request): Response|Application|ResponseFactory
+    /**
+     * Update an existing student
+     *
+     * @param Request $request The incoming request to the endpoint
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
+     * Code 200 when the student was updated correctly
+     *
+     * @see Student
+     */
+    public function put(Request $request): Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $data = $request->validate([
             "id" => "required|int",
@@ -90,30 +128,39 @@ class StudentsController extends Controller
             "curso" => "nullable|string"
         ]);
 
-        $product = Student::findOrFail($data["id"]);
+        $student = Student::findOrFail($data["id"]);
 
         if (isset($data["nombre"])) {
-            $product->nombre = $data["nombre"];
+            $student->nombre = $data["nombre"];
         }
 
         if (isset($data["apellidos"])) {
-            $product->nombre = $data["apellidos"];
+            $student->apellidos = $data["apellidos"];
         }
 
         if (isset($data["dni"])) {
-            $product->dni = $data["dni"];
+            $student->dni = $data["dni"];
         }
 
         if (isset($data["curso"])) {
-            $product->curso = $data["curso"];
+            $student->curso = $data["curso"];
         }
 
-        $product->save();
+        $student->save();
 
         // Ok
-        return response(status: 200);
+        return response(content: "", status: 200);
     }
 
+    /**
+     * Delete a student
+     *
+     * @param Request $request The incoming request to the endpoint
+     * @return Response|Application|ResponseFactory Code 200 when a student was found and deleted successfully<p>
+     * Otherwise, a 410 code gets returned
+     *
+     * @see Student
+     */
     public function delete(Request $request): Response|Application|ResponseFactory
     {
         $data = $request->validate([
@@ -124,7 +171,7 @@ class StudentsController extends Controller
 
         if ($deleted) {
             // Ok
-            return response(status: 200);
+            return response(content: "", status: 200);
         }
 
         // Gone
