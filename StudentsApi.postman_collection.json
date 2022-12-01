@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bb252e05-8aa1-49de-88be-5bc09e371670",
+		"_postman_id": "1ad0dcda-bc90-48b1-bc2c-99821a16affb",
 		"name": "StudentsApi",
 		"description": "This collection contains all the blackbox tests for the [CrudApi](https://github.com/ssadrian/CrudApi).",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"nombre\": \"John\",\r\n    \"apellidos\": \"Smith\",\r\n    \"dni\": \"A12345678A\",\r\n    \"curso\": \"CompSci\"\r\n}",
+							"raw": "{\r\n    \"nombre\": \"{{$randomFirstName}}\",\r\n    \"apellidos\": \"{{$randomLastName}}\",\r\n    \"dni\": \"{{$randomAlphaNumeric}}12345678{{$randomAlphaNumeric}}\",\r\n    \"curso\": \"{{$randomWord}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -277,11 +277,7 @@
 		},
 		{
 			"key": "Api Token",
-			"value": "GDbf5mq8DMiSkoDQllVGzqVc4r5KXeqIcpjFMnti"
-		},
-		{
-			"value": "",
-			"type": "default"
+			"value": "ljIWyvLxanwzJ4p6Ik2riuR6HtE9ys88KhjjZPTs"
 		}
 	]
 }
