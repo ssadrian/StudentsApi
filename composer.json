@@ -37,8 +37,8 @@
         }
     },
     "scripts": {
-        "start": [
-            "@php artisan migrate:fresh",
+        "new-serve": [
+            "@php artisan migrate:fresh --seed",
             "@php artisan serve"
         ],
         "post-autoload-dump": [
