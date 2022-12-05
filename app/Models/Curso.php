@@ -14,7 +14,7 @@ class Curso extends Model
      *
      * @var string
      */
-    protected $table = 'students';
+    protected $table = 'cursos';
 
     /**
      * The attributes that are mass assignable.
@@ -22,9 +22,6 @@ class Curso extends Model
      * @var array<string>
      */
     protected $fillable = [
-        'nombre',
-        'apellidos',
-        'dni',
-        'curso'
+        'nombre'
     ];
 }

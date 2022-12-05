@@ -14,10 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('profesores', function (Blueprint $table) {
-            $table->id()->autoIncrement();
+            $table->id();
             $table->string('nombre');
             $table->string('apellidos');
             $table->string('dni');
+            $table->foreignId("curso_id")->constrained();
             $table->timestamps();
         });
     }

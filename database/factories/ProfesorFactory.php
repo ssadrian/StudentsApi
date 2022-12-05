@@ -17,7 +17,9 @@ class ProfesorFactory extends Factory
     public function definition()
     {
         return [
-            //
+            "nombre" => fake()->firstName(),
+            "apellidos" => fake()->lastName(),
+            "dni" => fake()->bothify("?########?")
         ];
     }
 }
