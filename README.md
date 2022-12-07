@@ -19,12 +19,11 @@
 - Configure an *.env* file, check the example [.env](./.env.example)
 
 ```sh
-# Onetime command as this might delete the already existing DB
-# When it does not exist then a new DB will get created
-php artisan migrate
+# Start a new instance, DELETES ALL DATA
+composer build
 
-# Start the project
-php artisan serve
+# Serve the API
+composer serve
 ```
 
 </details>

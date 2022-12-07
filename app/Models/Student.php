@@ -29,7 +29,7 @@ class Student extends Model
         "dni"
     ];
 
-    public function role(): HasOne
+    public function user(): HasOne
     {
         return $this->hasOne(User::class);
     }

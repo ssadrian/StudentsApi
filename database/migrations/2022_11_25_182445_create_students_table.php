@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string("nombre");
             $table->string("apellidos");
             $table->string("dni");
-            $table->foreignId('users_id')->constrained();
+            $table->foreignId('users_id')->nullable()->constrained();
             $table->timestamps();
         });
     }

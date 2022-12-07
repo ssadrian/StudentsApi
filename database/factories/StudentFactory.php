@@ -22,7 +22,7 @@ class StudentFactory extends Factory
             "nombre" => fake()->firstName(),
             "apellidos" => fake()->lastName(),
             "dni" => fake()->bothify("?########?"),
-            "role" => Student::factory()->hasRole(1),
+            "user" => Student::factory()->hasUser(1),
             "cursos" => Student::factory()->hasCursos(1)
         ];
     }

@@ -37,14 +37,19 @@
         }
     },
     "scripts": {
-        "new": [
-            "Composer\\Config::disableProcessTimeout",
-            "@php artisan migrate --seed",
-            "@php artisan serve"
-        ],
         "renew": [
             "Composer\\Config::disableProcessTimeout",
             "@php artisan migrate:fresh --seed",
+            "@php artisan serve"
+        ],
+        "build": [
+            "Composer\\Config::disableProcessTimeout",
+            "composer install",
+            "@php artisan migrate:fresh --seed"
+        ],
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "composer install",
             "@php artisan serve"
         ],
         "post-autoload-dump": [

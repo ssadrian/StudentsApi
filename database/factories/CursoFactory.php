@@ -21,8 +21,8 @@ class CursoFactory extends Factory
     {
         return [
             "nombre" => fake()->word(),
-            "profesor" => Profesor::factory()->hasProfesor(1),
-            'student' => Student::factory()->hasStudent(1),
+            "profesor" => Profesor::factory()->hasCurso(),
+            'student' => Student::factory()->hasCurso(),
         ];
     }
 }
