@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,7 +26,16 @@ class Profesor extends Model
     protected $fillable = [
         'nombre',
         'apellidos',
-        'dni',
-        'curso'
+        'dni'
     ];
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class);
+    }
+
+    public function cursos(): HasMany
+    {
+        return $this->hasMany(Curso::class);
+    }
 }

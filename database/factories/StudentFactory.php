@@ -2,15 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use App\Models\Curso;
-use App\Models\Profesor;
+use App\Models\Role;
+use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Profesor>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Student>
  */
-class ProfesorFactory extends Factory
+class StudentFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -23,8 +22,8 @@ class ProfesorFactory extends Factory
             "nombre" => fake()->firstName(),
             "apellidos" => fake()->lastName(),
             "dni" => fake()->bothify("?########?"),
-            "user" => Profesor::factory()->hasUser(1),
-            "cursos" => Profesor::factory()->hasCursos(1)
+            "role" => Student::factory()->hasRole(1),
+            "cursos" => Student::factory()->hasCursos(1)
         ];
     }
 }

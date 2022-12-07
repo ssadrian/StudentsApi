@@ -2,10 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Curso;
+use App\Models\Student;
+use App\Models\Profesor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Curso>
+ * @extends Factory<Curso>
  */
 class CursoFactory extends Factory
 {
@@ -17,7 +20,9 @@ class CursoFactory extends Factory
     public function definition()
     {
         return [
-            "nombre" => fake()->word()
+            "nombre" => fake()->word(),
+            "profesor" => Profesor::factory()->hasProfesor(1),
+            'student' => Student::factory()->hasStudent(1),
         ];
     }
 }

@@ -25,7 +25,7 @@ class StudentsController extends Controller
      */
     public function getAll(): Collection
     {
-        return Student::all();
+        return Student::with(["role", "cursos"])->get();
     }
 
     /**
@@ -155,19 +155,15 @@ class StudentsController extends Controller
     /**
      * Delete a student
      *
-     * @param Request $request The incoming request to the endpoint
+     * @param Student $student
      * @return Response|Application|ResponseFactory Code 200 when a student was found and deleted successfully<p>
      * Otherwise, a 410 code gets returned
      *
      * @see Student
      */
-    public function delete(Request $request): Response|Application|ResponseFactory
+    public function delete(Student $student): Application|Response|ResponseFactory
     {
-        $data = $request->validate([
-            "id" => "required|int"
-        ]);
-
-        $deleted = Student::destroy($data["id"]) !== 0;
+        $deleted = $student->delete();
 
         if ($deleted) {
             // Ok
