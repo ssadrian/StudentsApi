@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Console\Application;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Controller in charge with the C.R.U.D. of Students
@@ -78,12 +80,12 @@ class StudentsController extends Controller
      * Create a new student
      *
      * @param Request $request The incoming request to the endpoint
-     * @return Application|ResponseFactory|Response Code 201 when a new student was created successfully<p>
+     * @return JsonResponse|Response|ResponseFactory Code 201 when a new student was created successfully<p>
      * Otherwise, returns a BadRequest
      *
      * @see Student
      */
-    public function post(Request $request): Application|ResponseFactory|Response
+    public function post(Request $request)
     {
         $data = $request->validate([
             "nombre" => "required|string",
@@ -92,33 +94,36 @@ class StudentsController extends Controller
             "curso" => "required|string"
         ]);
 
-        $newStudent = Student::create([
-            "nombre" => $data["nombre"],
-            "apellidos" => $data["apellidos"],
-            "dni" => $data["dni"],
-            "curso" => $data["curso"]
-        ]);
-
-        // Student exists -> was created
-        if ($newStudent) {
-            // Created
-            return response(content: "", status: 201);
+        DB::beginTransaction();
+        try {
+            Student::create([
+                'nombre' => $data['nombre'],
+                'apellidos' => $data['apellidos'],
+                'dni' => $data['dni'],
+                'curso' => $data['curso']
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 400);
         }
 
-        // Bad Request
-        return response(content: "", status: 400);
+        // Ok
+        DB::commit();
+        return response(status: 200);
     }
 
     /**
      * Update an existing student
      *
      * @param Request $request The incoming request to the endpoint
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|JsonResponse|Response
      * Code 200 when the student was updated correctly
      *
      * @see Student
      */
-    public function put(Request $request): Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    public function put(Request $request)
     {
         $data = $request->validate([
             "id" => "required|int",
@@ -128,27 +133,36 @@ class StudentsController extends Controller
             "curso" => "nullable|string"
         ]);
 
-        $student = Student::findOrFail($data["id"]);
+        DB::beginTransaction();
+        try {
+            $student = Student::find($data['id']);
 
-        if (isset($data["nombre"])) {
-            $student->nombre = $data["nombre"];
+            if (isset($data['nombre'])) {
+                $student->nombre = $data['nombre'];
+            }
+
+            if (isset($data['apellidos'])) {
+                $student->apellidos = $data['apellidos'];
+            }
+
+            if (isset($data['dni'])) {
+                $student->dni = $data['dni'];
+            }
+
+            if (isset($data['curso'])) {
+                $student->curso = $data['curso'];
+            }
+
+            $student->save();
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 400);
         }
-
-        if (isset($data["apellidos"])) {
-            $student->apellidos = $data["apellidos"];
-        }
-
-        if (isset($data["dni"])) {
-            $student->dni = $data["dni"];
-        }
-
-        if (isset($data["curso"])) {
-            $student->curso = $data["curso"];
-        }
-
-        $student->save();
 
         // Ok
+        DB::commit();
         return response(content: "", status: 200);
     }
 
@@ -156,21 +170,24 @@ class StudentsController extends Controller
      * Delete a student
      *
      * @param Student $student
-     * @return Response|Application|ResponseFactory Code 200 when a student was found and deleted successfully<p>
+     * @return JsonResponse|Response|ResponseFactory Code 200 when a student was found and deleted successfully<p>
      * Otherwise, a 410 code gets returned
      *
      * @see Student
      */
-    public function delete(Student $student): Application|Response|ResponseFactory
+    public function delete(Student $student)
     {
-        $deleted = $student->delete();
-
-        if ($deleted) {
-            // Ok
-            return response(content: "", status: 200);
+        DB::beginTransaction();
+        try {
+            $student->delete();
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 410);
         }
 
-        // Gone
-        return response(status: 410);
+        // Ok
+        return response(status: 200);
     }
 }

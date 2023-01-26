@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profesor;
+use Exception;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Controller in charge with the C.R.U.D. of Professors
@@ -40,21 +42,24 @@ class ProfesorController extends Controller
             'curso' => 'required|string'
         ]);
 
-        $newProfesor = Profesor::create([
-            'nombre' => $data['nombre'],
-            'apellidos' => $data['apellidos'],
-            'dni' => $data['dni'],
-            'curso' => $data['curso']
-        ]);
+        DB::beginTransaction();
 
-        // Profesor exists -> was created
-        if ($newProfesor) {
-            // Created
-            return response(content: '', status: 201);
+        try {
+            Profesor::create([
+                'nombre' => $data['nombre'],
+                'apellidos' => $data['apellidos'],
+                'dni' => $data['dni'],
+                'curso' => $data['curso']
+            ]);
+        } catch (Exception $e) {
+            // Bad Request
+            DB::rollBack();
+            return response(content: '', status: 400);
         }
 
-        // Bad Request
-        return response(content: '', status: 400);
+        // Created
+        DB::commit();
+        return response(content: '', status: 201);
     }
 
     /**
@@ -109,27 +114,35 @@ class ProfesorController extends Controller
             'curso' => 'nullable|string'
         ]);
 
-        $oldProfesor = Profesor::findOrFail($profesor->id);
+        DB::beginTransaction();
+        try {
+            $oldProfesor = Profesor::find($profesor->id);
 
-        if (isset($profesor->nombre)) {
-            $oldProfesor->nombre = $profesor->nombre;
+            if (isset($profesor->nombre)) {
+                $oldProfesor->nombre = $profesor->nombre;
+            }
+
+            if (isset($profesor->apellidos)) {
+                $oldProfesor->apellidos = $profesor->apellidos;
+            }
+
+            if (isset($profesor->dni)) {
+                $oldProfesor->dni = $profesor->dni;
+            }
+
+            if (isset($profesor->curso)) {
+                $oldProfesor->curso = $profesor->curso;
+            }
+
+            $oldProfesor->save();
+        } catch (Exception $e) {
+            // Bad Request
+            DB::rollBack();
+            return response(content: $e, status: 400);
         }
-
-        if (isset($profesor->apellidos)) {
-            $oldProfesor->apellidos = $profesor->apellidos;
-        }
-
-        if (isset($profesor->dni)) {
-            $oldProfesor->dni = $profesor->dni;
-        }
-
-        if (isset($profesor->curso)) {
-            $oldProfesor->curso = $profesor->curso;
-        }
-
-        $oldProfesor->save();
 
         // Ok
+        DB::commit();
         return response(content: '', status: 200);
     }
 
@@ -141,14 +154,17 @@ class ProfesorController extends Controller
      */
     public function destroy(Profesor $profesor): Response
     {
-        $deleted = Profesor::destroy($profesor->id) !== 0;
-
-        if ($deleted) {
-            // Ok
-            return response(content: '', status: 200);
+        DB::beginTransaction();
+        try {
+            Profesor::destroy($profesor->id);
+        } catch (Exception $e) {
+            // Gone
+            DB::rollBack();
+            return response(status: 410);
         }
 
-        // Gone
-        return response(status: 410);
+        // Ok
+        DB::commit();
+        return response(content: '', status: 200);
     }
 }

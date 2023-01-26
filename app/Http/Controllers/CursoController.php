@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Curso;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Controller in charge with the C.R.U.D. of Courses
@@ -38,16 +40,19 @@ class CursoController extends Controller
             'nombre' => 'required|string'
         ]);
 
+        DB::beginTransaction();
         $newCurso = Curso::create([
             'nombre' => $data['nombre']
         ]);
 
         // Student exists -> was created
         if ($newCurso) {
+            DB::commit();
             // Created
             return response(content: '', status: 201);
         }
 
+        DB::rollBack();
         // Bad Request
         return response(content: '', status: 400);
     }
@@ -88,27 +93,34 @@ class CursoController extends Controller
             'id' => 'required|int'
         ]);
 
-        $cursos = Curso::findOrFail($data['id']);
+        DB::beginTransaction();
+        try {
+            $cursos = Curso::find($data['id']);
 
-        if (isset($curso->nombre)) {
-            $cursos->nombre = $curso->nombre;
+            if (isset($curso->nombre)) {
+                $cursos->nombre = $curso->nombre;
+            }
+
+            if (isset($curso->apellidos)) {
+                $cursos->apellidos = $curso->apellidos;
+            }
+
+            if (isset($curso->dni)) {
+                $cursos->dni = $curso->dni;
+            }
+
+            if (isset($curso->curso)) {
+                $cursos->curso = $curso->curso;
+            }
+
+            $cursos->save();
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response(content: $e->getMessage(), status: 400);
         }
-
-        if (isset($curso->apellidos)) {
-            $cursos->apellidos = $curso->apellidos;
-        }
-
-        if (isset($curso->dni)) {
-            $cursos->dni = $curso->dni;
-        }
-
-        if (isset($curso->curso)) {
-            $cursos->curso = $curso->curso;
-        }
-
-        $cursos->save();
 
         // Ok
+        DB::commit();
         return response(content: '', status: 200);
     }
 
@@ -120,14 +132,17 @@ class CursoController extends Controller
      */
     public function destroy(Curso $curso)
     {
+        DB::beginTransaction();
         $deleted = $curso->delete();
 
         if ($deleted) {
             // Ok
+            DB::commit();
             return response(content: '', status: 200);
         }
 
         // Gone
+        DB::rollBack();
         return response(status: 410);
     }
 }

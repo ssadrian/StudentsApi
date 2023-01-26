@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -18,9 +21,9 @@ class AuthController extends Controller
      * Register/create a new user for the api
      *
      * @param Request $request The incoming request to the endpoint
-     * @return Response Code 201 when the user was registered/created correctly
+     * @return Application|ResponseFactory|JsonResponse|Response Code 201 when the user was registered/created correctly
      */
-    public function register(Request $request): Response
+    public function register(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|unique:users',
@@ -33,7 +36,17 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password'])
         ]);
-        $user->save();
+
+        DB::beginTransaction();
+        try {
+            $user->save();
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => $e->getMessage()
+            ]);
+        }
 
         // Created
         return response(status: 201);
